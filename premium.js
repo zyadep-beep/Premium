@@ -215,3 +215,39 @@
   document.addEventListener('langchange', applyP);
   window.PremiumDebug = { fx: () => fxs.length };
 })();
+
+
+/* ================= cards: reveal, tilt and spotlight ================= */
+(function () {
+  const html = document.documentElement;
+  html.classList.add('cards-js');
+  let io = null;
+  function initCards() {
+    if (io) io.disconnect();
+    io = new IntersectionObserver(es => es.forEach(e => {
+      if (!e.isIntersecting) return;
+      const c = e.target; io.unobserve(c); c.classList.add('in');
+      const d = (parseFloat(getComputedStyle(c).getPropertyValue('--i')) || 0) * 90;
+      setTimeout(() => c.classList.add('done'), 1300 + d);
+    }), { threshold: 0.15, rootMargin: '0px 0px -6% 0px' });
+    document.querySelectorAll('.acard, .scard').forEach(c => { if (!c.classList.contains('in')) io.observe(c); });
+  }
+  initCards();
+  document.addEventListener('langchange', () => setTimeout(initCards, 80));
+  if (!matchMedia('(hover:hover) and (pointer:fine)').matches || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  let cur = null;
+  const reset = c => { c.classList.remove('tilt'); c.style.transform = ''; };
+  document.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse') return;
+    const c = e.target.closest ? e.target.closest('.acard, .scard') : null;
+    if (cur && cur !== c) { reset(cur); cur = null; }
+    if (!c) return;
+    cur = c;
+    const r = c.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    c.style.setProperty('--mx', x + 'px'); c.style.setProperty('--my', y + 'px');
+    if (html.dataset.quality === 'low' || !c.classList.contains('done')) return;
+    c.classList.add('tilt');
+    c.style.transform = 'perspective(900px) rotateX(' + ((0.5 - y / r.height) * 8).toFixed(2) + 'deg) rotateY(' + ((x / r.width - 0.5) * 10).toFixed(2) + 'deg) translateY(-4px)';
+  });
+  document.addEventListener('pointerout', e => { if (!e.relatedTarget && cur) { reset(cur); cur = null; } });
+})();

@@ -21,7 +21,10 @@ const D = {
   ch1: ['WhatsApp', 'واتساب'], ch2: ['Instagram', 'إنستغرام'], ch3: ['Website', 'الموقع'],
   triA: ['Three channels.', 'ثلاث قنوات.'], triB: ['One mind behind them.', 'وعقل واحد خلفها.'],
   triEnd: ['Every message, on every channel, answered by one AI that knows your business.', 'كل رسالة، على كل قناة، يرد عليها ذكاء اصطناعي واحد يعرف عملك جيداً.'],
-  abEye: ['Who we are', 'من نحن'], flowCap: ['Your business, on autopilot.', 'عملك يعمل تلقائياً.'],
+  abEye: ['Who we are', 'من نحن'],
+  ab1t: ['AI automation studio', 'استوديو أتمتة'], ab1d: ['One Arise is an AI automation studio for Kuwait and the Gulf.', 'One Arise استوديو أتمتة بالذكاء الاصطناعي للكويت والخليج.'],
+  ab2t: ['Systems that run themselves', 'أنظمة تعمل وحدها'], ab2d: ['We turn missed messages, no-shows and slow follow-ups into systems that run themselves.', 'نحوّل الرسائل الفائتة والمواعيد الضائعة والمتابعات البطيئة إلى أنظمة تعمل وحدها.'],
+  ab3t: ['Your team, free to focus', 'فريقك يركّز على الأهم'], ab3d: ['So your team can focus on the work only people can do.', 'ليتفرغ فريقك للعمل الذي لا يقوم به إلا البشر.'], flowCap: ['Your business, on autopilot.', 'عملك يعمل تلقائياً.'],
   stText: ['One Arise is an AI automation studio for Kuwait and the Gulf. We turn missed messages, no-shows and slow follow-ups into systems that run themselves, so your team can focus on the work only people can do.', 'One Arise استوديو أتمتة بالذكاء الاصطناعي للكويت والخليج. نحوّل الرسائل الفائتة والمواعيد الضائعة والمتابعات البطيئة إلى أنظمة تعمل وحدها، ليتفرغ فريقك للعمل الذي لا يقوم به إلا البشر.'],
   bb1: ['WhatsApp', 'واتساب'], bb2: ['Booking', 'الحجز'], bb3: ['CRM', 'العملاء'], bb4: ['Analytics', 'التحليلات'],
   bigL: ['Always<br>awake', 'دائماً<br>مستيقظ'], bigR: ['Never misses<br>a customer', 'لا يفوّت<br>أي عميل'],
@@ -85,7 +88,7 @@ function renderStatic() {
   $$('[data-i]').forEach(e => { const v = tr(e.dataset.i); if (v) e.innerHTML = v; });
   $$('[data-ph]').forEach(e => { const v = tr(e.dataset.ph); if (v) e.placeholder = v; });
   $('#langBtn').textContent = lang === 'ar' ? 'English' : 'عربي';
-  $('#svcs').innerHTML = D.svc.map((s, i) => `<li class="st-row" style="--i:${i}" data-cursor="${T('Automate', 'أتمتة')}"><span class="st-n">0${i + 1}</span><span class="st-ic"><svg viewBox="0 0 24 24"><path d="${IC[icons[i]]}"/></svg></span><h3 class="st-t">${lang === 'ar' ? s[2] : s[0]}</h3><p class="st-d">${lang === 'ar' ? s[3] : s[1]}</p></li>`).join('');
+  $('#svcs').innerHTML = D.svc.map((s, i) => `<li class="scard" style="--i:${i}"><span class="sc-n">0${i + 1}</span><span class="sc-ic"><svg viewBox="0 0 24 24"><path d="${IC[icons[i]]}"/></svg></span><h3 class="sc-t">${lang === 'ar' ? s[2] : s[0]}</h3><p class="sc-d">${lang === 'ar' ? s[3] : s[1]}</p><i class="sc-line"></i></li>`).join('');
   const words = D.m[lang === 'ar' ? 1 : 0];
   $('#mq').innerHTML = Array.from({ length: 4 }, () => words.map(w => `<span>${w}</span><span>✦</span>`).join('')).join('');
   document.title = T('One Arise — AI Automation for Kuwait & the Gulf', 'One Arise — أتمتة بالذكاء الاصطناعي للكويت والخليج');

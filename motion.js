@@ -92,10 +92,6 @@
       gsap.to('.hero-in', { yPercent: -30, opacity: 0, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true } });
 
 
-      // statement words scrub
-      const st = splitWords($('#stText'));
-      gsap.set(st.words, { opacity: 0.32 });
-      gsap.to(st.words, { opacity: 1, stagger: 0.1, ease: 'none', scrollTrigger: { trigger: '#stText', start: 'top 80%', end: 'bottom 45%', scrub: true } });
 
       // headings word reveal
       $$('.split-w').forEach(h => {
@@ -103,12 +99,6 @@
         gsap.from(s.words, { yPercent: 110, duration: 1.1, stagger: 0.05, ease: 'expo.out', scrollTrigger: { trigger: h, start: 'top 85%' } });
       });
 
-      // staircase
-      const rows = $$('.st-row');
-      rows.forEach((r, i) => {
-        gsap.from(r, { x: (isAr() ? -1 : 1) * (120 + i * 40), opacity: 0, ease: 'power3.out', scrollTrigger: { trigger: r, start: 'top 95%', end: 'top 60%', scrub: 0.8 } });
-        gsap.from($('.st-ic', r), { scale: 0, rotate: -90, ease: 'back.out(2)', duration: .8, scrollTrigger: { trigger: r, start: 'top 80%' } });
-      });
 
       // marquee velocity
       const mq = $('#mq');
