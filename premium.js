@@ -115,7 +115,8 @@
   const fxs = [];
   function createFX(box, img) {
     const cv = document.createElement('canvas'); cv.className = 'fx'; cv.setAttribute('aria-hidden', 'true');
-    const gl = cv.getContext('webgl', { alpha: false, antialias: false }); if (!gl) return null;
+    const gl = cv.getContext('webgl2', { alpha: false, antialias: false }) || cv.getContext('webgl', { alpha: false, antialias: false }); if (!gl) return null;
+    const isGL2 = typeof WebGL2RenderingContext !== 'undefined' && gl instanceof WebGL2RenderingContext;
     const VS = 'attribute vec2 p;varying vec2 v;void main(){v=vec2(p.x*.5+.5,.5-p.y*.5);gl_Position=vec4(p,0.,1.);}';
     const FS = [
       '#ifdef GL_FRAGMENT_PRECISION_HIGH', 'precision highp float;', '#else', 'precision mediump float;', '#endif',
@@ -148,10 +149,15 @@
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     let ready = false, isz = [1, 1];
-    const im = new Image(); im.onload = () => { gl.bindTexture(gl.TEXTURE_2D, tex); gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, im); isz = [im.naturalWidth, im.naturalHeight]; ready = true; }; im.src = img.currentSrc || img.src;
+    const im = new Image(); im.onload = () => { gl.bindTexture(gl.TEXTURE_2D, tex); let srcTex = im;
+      if (!isGL2) { const pot = n => { let p = 1; while (p < n) p <<= 1; return p; }; const c2 = document.createElement('canvas'); c2.width = Math.min(2048, pot(im.naturalWidth)); c2.height = Math.min(2048, pot(im.naturalHeight)); const x2 = c2.getContext('2d'); x2.imageSmoothingEnabled = true; x2.imageSmoothingQuality = 'high'; x2.drawImage(im, 0, 0, c2.width, c2.height); srcTex = c2; }
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, srcTex);
+      gl.generateMipmap(gl.TEXTURE_2D); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+      const ax = gl.getExtension('EXT_texture_filter_anisotropic'); if (ax) gl.texParameterf(gl.TEXTURE_2D, ax.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, gl.getParameter(ax.MAX_TEXTURE_MAX_ANISOTROPY_EXT)));
+      isz = [im.naturalWidth, im.naturalHeight]; ready = true; }; im.src = img.currentSrc || img.src;
     box.appendChild(cv);
     let target = 0, h = 0, mx = 0.5, my = 0.5, tx = 0.5, ty = 0.5, vel = 0, raf = 0, running = false;
-    function size() { const r = box.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 1.5); cv.width = Math.max(2, Math.round(r.width * d)); cv.height = Math.max(2, Math.round(r.height * d)); gl.viewport(0, 0, cv.width, cv.height); }
+    function size() { const r = box.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2); cv.width = Math.max(2, Math.round(r.width * d)); cv.height = Math.max(2, Math.round(r.height * d)); gl.viewport(0, 0, cv.width, cv.height); }
     function pos(e) { const r = box.getBoundingClientRect(), nx = (e.clientX - r.left) / r.width, ny = (e.clientY - r.top) / r.height; vel = Math.min(1, vel + Math.hypot(nx - tx, ny - ty) * 3); tx = nx; ty = ny; }
     function frame() {
       h += (target - h) * 0.09; mx += (tx - mx) * 0.14; my += (ty - my) * 0.14; vel *= 0.9;
