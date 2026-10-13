@@ -191,7 +191,7 @@
     if (!PALS[p]) p = 'obsidian';
     html.dataset.palette = p; store.set('ap-palette', p);
     $$('#pals button').forEach(b => b.classList.toggle('on', b.dataset.pal === p));
-    $$('img[data-img]').forEach(img => { const s = './assets/' + p + '/' + img.dataset.img + '?v=hd1'; if (img.getAttribute('src') !== s) img.setAttribute('src', s); });
+    $$('img[data-img]').forEach(img => { const s = './assets/' + p + '/' + img.dataset.img + '?v=hd2'; if (img.getAttribute('src') !== s) img.setAttribute('src', s); });
     disposeFX(); updatePalName();
     try { const m = $('meta[name="theme-color"]'); const c = getComputedStyle(html).getPropertyValue('--bg').trim(); if (m && c) m.content = c; } catch (e) {}
   }
